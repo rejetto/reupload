@@ -1,5 +1,7 @@
 "use strict";{
-    // should we consider config.dont_overwrite_uploading ?
+    if (!window.showSaveFilePicker)
+        console.warn("Reupload plugin works only on https")
+
     HFS.onEvent('fileMenu', ({ entry, menu }) => window.showSaveFilePicker && HFS.state.props.can_overwrite && {
         label: "Download and re-upload on change",
         icon: 'download',
