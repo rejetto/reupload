@@ -1,11 +1,13 @@
 "use strict";{
     if (!window.showSaveFilePicker)
-        console.warn("Reupload plugin works only on https")
+        console.warn("Reupload plugin works only on Chrome with https")
+    const config = HFS.getPluginConfig()
 
     HFS.onEvent('fileMenu', ({ entry, menu }) => window.showSaveFilePicker && HFS.state.props.can_overwrite && {
         label: "Download and re-upload on change",
         icon: 'download',
         async onClick(){
+            const folder = location.pathname.slice(0,-1)
             const response = await fetch(entry.uri)
             const blob = await response.blob()
             const handle = await window.showSaveFilePicker({ suggestedName: entry.name, startIn: 'desktop' })
@@ -22,11 +24,13 @@
                         return lastTs = ts
                     if (ts === lastTs) return
                     lastTs = ts
-                    const body = new FormData()
-                    body.append('file', file, entry.name)
                     last?.abort()
                     console.log('reupload: started')
-                    last = fetchEx(location + '?overwrite', { method: 'POST', body })
+                    const path = (config.destination || '$FOLDER/$FILE')
+                        .replace('$FOLDER', folder)
+                        .replace('$FILE', entry.name)
+                        .replace('$USERNAME', HFS.state.username || '')
+                    last = fetchEx(path + '?overwrite', { method: 'PUT', body: file })
                     await last
                     console.log('reupload: finished')
                     HFS.reloadList()
