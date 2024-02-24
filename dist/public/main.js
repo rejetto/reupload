@@ -3,7 +3,7 @@
         console.warn("Reupload plugin works only on Chrome with https")
     const config = HFS.getPluginConfig()
 
-    HFS.onEvent('fileMenu', ({ entry, menu }) => window.showSaveFilePicker && HFS.state.props.can_overwrite && {
+    HFS.onEvent('fileMenu', ({ entry }) => window.showSaveFilePicker && HFS.state.props?.can_overwrite && {
         label: "Download and re-upload on change",
         icon: 'download',
         async onClick(){
