@@ -14,6 +14,7 @@
             const writable = await handle.createWritable()
             await writable.write(blob)
             await writable.close()
+            HFS.dialogLib.alertDialog("This file is monitored until you close or reload this page.\nYou can use any editor on it, and it will be re-uploaded on change.")
             let last
             let lastTs
             setInterval(async () => {
@@ -30,7 +31,7 @@
                         .replace('$FOLDER', folder)
                         .replace('$FILE', entry.name)
                         .replace('$USERNAME', HFS.state.username || '')
-                    last = fetchEx(path + '?overwrite', { method: 'PUT', body: file })
+                    last = fetchEx(path + '?existing=overwrite', { method: 'PUT', body: file })
                     await last
                     console.log('reupload: finished')
                     HFS.reloadList()
